@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>A Birthday Surprise 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose: #f43f6a;
+    --gold: #f5c842;
+    --cream: #fff8f0;
+    --deep: #1a0a12;
+  }
+
+  html { height: -webkit-fill-available; height: 100%; }
+
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    background: var(--deep);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Stars */
+  .stars {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .star {
+    position: absolute; border-radius: 50%; background: white;
+    -webkit-animation: twinkle var(--d) ease-in-out infinite alternate;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+  }
+  @-webkit-keyframes twinkle {
+    from { opacity: var(--min); -webkit-transform: scale(1); }
+    to   { opacity: 1; -webkit-transform: scale(1.4); }
+  }
+  @keyframes twinkle {
+    from { opacity: var(--min); transform: scale(1); }
+    to   { opacity: 1; transform: scale(1.4); }
+  }
+
+  /* Page */
+  .page {
+    position: relative; z-index: 1; width: 100%;
+    min-height: 100vh; min-height: -webkit-fill-available;
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: column; flex-direction: column;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    padding: 2rem 1.2rem;
+    padding-left: max(1.2rem, env(safe-area-inset-left));
+    padding-right: max(1.2rem, env(safe-area-inset-right));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
+  /* Unlock screen */
+  #unlock-screen {
+    text-align: center; width: 100%;
+    -webkit-animation: fadeIn 1.2s ease forwards;
+    animation: fadeIn 1.2s ease forwards;
+  }
+  #unlock-screen h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.7rem, 5.5vw, 3.2rem);
+    color: var(--cream); line-height: 1.25; margin-bottom: 0.5rem;
+  }
+  #unlock-screen h1 em { color: var(--gold); font-style: italic; }
+  #unlock-screen > p {
+    color: #c49aaf; font-size: 0.95rem;
+    margin-bottom: 2rem; letter-spacing: 0.02em;
+  }
+
+  .card-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px; padding: 2rem 1.5rem;
+    max-width: 420px; width: 100%; margin: 0 auto;
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .input-label {
+    display: block; font-size: 0.78rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #c49aaf;
+    margin-bottom: 0.6rem; text-align: left;
+  }
+
+  /* 3-dropdown date picker — works identically on iOS and Windows */
+  .date-selects {
+    display: -webkit-flex; display: flex; gap: 0.5rem; width: 100%;
+  }
+  .select-wrap {
+    position: relative;
+    -webkit-flex: 1; flex: 1;
+  }
+  .select-wrap::after {
+    content: '▾'; position: absolute;
+    right: 8px; top: 50%;
+    -webkit-transform: translateY(-50%); transform: translateY(-50%);
+    color: #c49aaf; font-size: 0.7rem; pointer-events: none;
+  }
+  .select-wrap select {
+    width: 100%; padding: 0.85rem 0.3rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    text-align: center; outline: none;
+    -webkit-appearance: none; appearance: none;
+    cursor: pointer;
+    -webkit-transition: border-color 0.3s; transition: border-color 0.3s;
+  }
+  .select-wrap select:focus { border-color: var(--rose); }
+  .select-wrap select option { background: #2a0a1a; color: var(--cream); }
+
+  .unlock-btn {
+    margin-top: 1.6rem; width: 100%; padding: 1rem;
+    background: -webkit-linear-gradient(135deg, var(--rose), #c2185b);
+    background: linear-gradient(135deg, var(--rose), #c2185b);
+    border: none; border-radius: 12px;
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500; letter-spacing: 0.04em;
+    cursor: pointer; -webkit-appearance: none; appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 8px 32px rgba(244,63,106,0.4);
+    -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s;
+  }
+  .unlock-btn:active { -webkit-transform: scale(0.97); transform: scale(0.97); }
+
+  .hint { margin-top: 1rem; font-size: 0.78rem; color: #7c5a6a; }
+
+  .error-msg {
+    color: #ff6b6b; font-size: 0.82rem;
+    margin-top: 0.8rem; display: none; text-align: center;
+  }
+
+  /* Card screen */
+  #card-screen { display: none; opacity: 0; text-align: center; max-width: 640px; width: 100%; }
+  #card-screen.visible {
+    display: block;
+    -webkit-animation: fadeUp 1s ease forwards; animation: fadeUp 1s ease forwards;
+  }
+
+  .envelope {
+    font-size: 4.5rem; display: block; line-height: 1;
+    margin-bottom: 1.5rem;
+    -webkit-animation: floatEnv 3s ease-in-out infinite; animation: floatEnv 3s ease-in-out infinite;
+    filter: drop-shadow(0 8px 24px rgba(244,63,106,0.4));
+    -webkit-filter: drop-shadow(0 8px 24px rgba(244,63,106,0.4));
+  }
+  @-webkit-keyframes floatEnv {
+    0%,100% { -webkit-transform: translateY(0) rotate(-2deg); }
+    50%      { -webkit-transform: translateY(-10px) rotate(2deg); }
+  }
+  @keyframes floatEnv {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-10px) rotate(2deg); }
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6.5vw, 3.8rem);
+    color: var(--cream); line-height: 1.1; margin-bottom: 0.3rem;
+  }
+  .card-title span { color: var(--rose); }
+
+  .card-name {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(1.5rem, 5vw, 2.6rem);
+    color: var(--gold); margin-bottom: 1.8rem;
+    -webkit-animation: shimmer 2s ease-in-out infinite alternate;
+    animation: shimmer 2s ease-in-out infinite alternate;
+  }
+  @-webkit-keyframes shimmer {
+    from { -webkit-filter: brightness(1); }
+    to   { -webkit-filter: brightness(1.3) drop-shadow(0 0 12px rgba(245,200,66,0.5)); }
+  }
+  @keyframes shimmer {
+    from { filter: brightness(1); }
+    to   { filter: brightness(1.3) drop-shadow(0 0 12px rgba(245,200,66,0.5)); }
+  }
+
+  .wishes-wrap {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px; padding: 2rem 1.5rem;
+    margin: 0 auto 2rem; position: relative; overflow: hidden;
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  }
+  .wishes-wrap::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at top left, rgba(244,63,106,0.08), transparent 60%),
+                radial-gradient(ellipse at bottom right, rgba(245,200,66,0.06), transparent 60%);
+    pointer-events: none;
+  }
+
+  .wish {
+    opacity: 0; -webkit-transform: translateY(30px); transform: translateY(30px);
+    margin-bottom: 1.5rem;
+    -webkit-transition: opacity 0.7s ease, -webkit-transform 0.7s ease;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    padding: 0.9rem 1rem;
+    border-left: 2px solid rgba(244,63,106,0.4); text-align: left;
+  }
+  .wish.show { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+  .wish:last-child { margin-bottom: 0; }
+
+  .wish-emoji { font-size: 1.4rem; margin-bottom: 0.25rem; display: block; line-height: 1; }
+  .wish-text {
+    font-family: 'Playfair Display', serif; font-size: 1rem;
+    color: var(--cream); line-height: 1.75; font-style: italic;
+  }
+
+  .from-tag {
+    margin-top: 1.8rem; padding-bottom: 1rem;
+    font-size: 0.85rem; color: #7c5a6a; letter-spacing: 0.06em; line-height: 1.8;
+  }
+  .from-tag strong { color: var(--rose); font-weight: 500; }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed; pointer-events: none; z-index: 999;
+    -webkit-animation: fall linear forwards; animation: fall linear forwards;
+  }
+  @-webkit-keyframes fall {
+    0%   { -webkit-transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { -webkit-transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Hearts */
+  .heart-float {
+    position: fixed; pointer-events: none; z-index: 998; line-height: 1;
+    -webkit-animation: floatHeart 3s ease-out forwards; animation: floatHeart 3s ease-out forwards;
+  }
+  @-webkit-keyframes floatHeart {
+    0%   { -webkit-transform: translateY(0) scale(0.5); opacity: 1; }
+    100% { -webkit-transform: translateY(-180px) scale(1.2); opacity: 0; }
+  }
+  @keyframes floatHeart {
+    0%   { transform: translateY(0) scale(0.5); opacity: 1; }
+    100% { transform: translateY(-180px) scale(1.2); opacity: 0; }
+  }
+
+  @-webkit-keyframes fadeIn {
+    from { opacity: 0; -webkit-transform: translateY(20px); }
+    to   { opacity: 1; -webkit-transform: none; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @-webkit-keyframes fadeUp {
+    from { opacity: 0; -webkit-transform: translateY(40px); }
+    to   { opacity: 1; -webkit-transform: none; }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 1.5rem 1rem; }
+    .card-box { padding: 1.6rem 1.1rem; border-radius: 20px; }
+    .wishes-wrap { padding: 1.4rem 1rem; }
+    .wish-text { font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="page">
+
+  <!-- STEP 1: Unlock -->
+  <div id="unlock-screen">
+    <h1>You have a <em>secret</em><br>birthday surprise 🎀</h1>
+    <p>Enter your birthday date to unlock it ✨</p>
+
+    <div class="card-box">
+      <label class="input-label">Your Birthday</label>
+      <div class="date-selects">
+        <div class="select-wrap">
+          <select id="sel-day" aria-label="Day">
+            <option value="">Day</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="sel-month" aria-label="Month">
+            <option value="">Month</option>
+            <option value="1">Jan</option><option value="2">Feb</option>
+            <option value="3">Mar</option><option value="4">Apr</option>
+            <option value="5">May</option><option value="6">Jun</option>
+            <option value="7">Jul</option><option value="8">Aug</option>
+            <option value="9">Sep</option><option value="10">Oct</option>
+            <option value="11">Nov</option><option value="12">Dec</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="sel-year" aria-label="Year">
+            <option value="">Year</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="error-msg" id="error-msg">Hmm, that doesn't seem right 🤔 Try again!</p>
+      <button class="unlock-btn" onclick="unlock()">Open My Surprise 🎁</button>
+      <p class="hint">Hint: it's the day the world got a little brighter 🌟</p>
+    </div>
+  </div>
+
+  <!-- STEP 2: Card -->
+  <div id="card-screen">
+    <div class="envelope">💌</div>
+    <div class="card-title">Happy <span>Birthday</span>,</div>
+    <div class="card-name">Beautiful</div>
+
+    <div class="wishes-wrap">
+      <div class="wish" id="w1">
+        <span class="wish-emoji">🌸</span>
+        <p class="wish-text">May this birthday mark the beginning of your most beautiful chapter yet — one filled with laughter, love, and everything your heart has ever dreamed of.</p>
+      </div>
+      <div class="wish" id="w2">
+        <span class="wish-emoji">✨</span>
+        <p class="wish-text">You deserve every bit of joy that comes your way. The world is so much warmer because you're in it, and I hope today reminds you just how special you truly are.</p>
+      </div>
+      <div class="wish" id="w3">
+        <span class="wish-emoji">🎂</span>
+        <p class="wish-text">Another year older, another year more wonderful. Wishing you a day as bright as your smile and as sweet as you are.</p>
+      </div>
+      <div class="wish" id="w4">
+        <span class="wish-emoji">💛</span>
+        <p class="wish-text">Even from across the miles, know that someone is thinking of you and sending you the biggest, warmest birthday wishes. You are missed and celebrated today.</p>
+      </div>
+    </div>
+
+    <p class="from-tag">With love, all the way from Australia 🇦🇺 → 🇲🇾<br>Happy Birthday <strong>💕</strong></p>
+  </div>
+
+</div>
+
+<script>
+  // ---- CONFIG: set her correct birthday ----
+  var CORRECT_MONTH = 3;   // 3 = March  (change this!)
+  var CORRECT_DAY   = 11;  // 11th       (change this!)
+  // ------------------------------------------
+
+  // Populate day dropdown
+  var selDay = document.getElementById('sel-day');
+  for (var d = 1; d <= 31; d++) {
+    var od = document.createElement('option');
+    od.value = d; od.textContent = d;
+    selDay.appendChild(od);
+  }
+
+  // Populate year dropdown
+  var selYear = document.getElementById('sel-year');
+  var thisYear = new Date().getFullYear();
+  for (var y = thisYear; y >= 1970; y--) {
+    var oy = document.createElement('option');
+    oy.value = y; oy.textContent = y;
+    selYear.appendChild(oy);
+  }
+
+  // Stars
+  var starsEl = document.getElementById('stars');
+  for (var i = 0; i < 100; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    var size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = 'width:'+size+'px;height:'+size+'px;'
+      +'left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;'
+      +'--d:'+(Math.random()*3+2).toFixed(1)+'s;'
+      +'--min:'+(Math.random()*0.3+0.05).toFixed(2)+';'
+      +'animation-delay:'+(Math.random()*4).toFixed(1)+'s;';
+    starsEl.appendChild(s);
+  }
+
+  function unlock() {
+    var day   = parseInt(document.getElementById('sel-day').value);
+    var month = parseInt(document.getElementById('sel-month').value);
+    var err   = document.getElementById('error-msg');
+    err.style.display = 'none';
+
+    if (!day || !month) {
+      err.style.display = 'block';
+      err.textContent = 'Please select your day and month 📅';
+      return;
+    }
+
+    if (month === CORRECT_MONTH && day === CORRECT_DAY) {
+      document.getElementById('unlock-screen').style.display = 'none';
+      var card = document.getElementById('card-screen');
+      card.classList.add('visible');
+      launchConfetti();
+      revealWishes();
+      startHearts();
+    } else {
+      err.style.display = 'block';
+      err.textContent = "Hmm, that doesn't seem right 🤔 Try again!";
+    }
+  }
+
+  function revealWishes() {
+    var wishes = document.querySelectorAll('.wish');
+    for (var i = 0; i < wishes.length; i++) {
+      (function(w, idx) {
+        setTimeout(function() { w.classList.add('show'); }, 600 + idx * 500);
+      })(wishes[i], i);
+    }
+  }
+
+  function launchConfetti() {
+    var colors = ['#f43f6a','#f5c842','#ffd6e0','#c2185b','#fff8f0','#a78bfa','#34d399'];
+    for (var i = 0; i < 80; i++) {
+      (function(delay) {
+        setTimeout(function() {
+          var c = document.createElement('div');
+          c.className = 'confetti-piece';
+          var size = Math.random()*8+5;
+          c.style.cssText = 'left:'+(Math.random()*100)+'vw;top:0;'
+            +'width:'+size+'px;height:'+size+'px;'
+            +'background:'+colors[Math.floor(Math.random()*colors.length)]+';'
+            +'border-radius:'+(Math.random()>0.5?'50%':'3px')+';'
+            +'animation-duration:'+(Math.random()*2.5+2).toFixed(1)+'s;';
+          document.body.appendChild(c);
+          setTimeout(function() { if(c.parentNode) c.parentNode.removeChild(c); }, 5000);
+        }, delay);
+      })(Math.random() * 1200);
+    }
+  }
+
+  function startHearts() {
+    var emojis = ['💕','❤️','🌸','✨','💛','🎀','💗'];
+    var count = 0;
+    var iv = setInterval(function() {
+      var h = document.createElement('div');
+      h.className = 'heart-float';
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.cssText = 'left:'+(10+Math.random()*80)+'vw;bottom:10vh;font-size:'+(1+Math.random()*0.8)+'rem;';
+      document.body.appendChild(h);
+      setTimeout(function() { if(h.parentNode) h.parentNode.removeChild(h); }, 3100);
+      if (++count > 18) clearInterval(iv);
+    }, 300);
+  }
+</script>
+</body>
+</html>
